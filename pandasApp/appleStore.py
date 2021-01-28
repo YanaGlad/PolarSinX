@@ -13,8 +13,9 @@ num_cols = [
     'sup_devices.num',
     'ipadSc_urls.num',
     'lang.num',
-    'cont_rating'
+     'cont_rating',
 ]
+
 cat_cols = [
     'currency',
     'prime_genre'
@@ -44,6 +45,12 @@ data['is_free'] = data['price'] == 0
 cat_cols.append('is_free')
 print(data.head())
 
+data = pd.get_dummies(data, columns=cat_cols)
+
+cat_cols_new = []
+for col_name in cat_cols:
+    cat_cols_new.extend(filter(lambda x: x.startswith(col_name), data.columns))
+
 from sklearn.preprocessing import StandardScaler
 
 pca = StandardScaler()
@@ -61,3 +68,17 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import r2_score, mean_squared_error
 
 
+def print_metrics(y_preds, y):
+    print(f'R^2: {r2_score(y_preds, y)}')
+    print(f'MSE: {mean_squared_error(y_preds, y)}')
+
+
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+print_metrics(lr.predict(X_test), y_test)
+
+knn = KNeighborsRegressor(n_neighbors = 5)
+knn.fit(X_train, y_train)
+
+print_metrics(knn.predict(X_test), y_test)
