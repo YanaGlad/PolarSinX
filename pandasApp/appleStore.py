@@ -65,7 +65,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, data[target_col], test_si
 
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import r2_score, mean_squared_error, make_scorer
 
 
 def print_metrics(y_preds, y):
@@ -82,3 +82,5 @@ knn = KNeighborsRegressor(n_neighbors = 5)
 knn.fit(X_train, y_train)
 
 print_metrics(knn.predict(X_test), y_test)
+
+from sklearn.model_selection import cross_validate
