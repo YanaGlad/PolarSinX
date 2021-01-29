@@ -13,7 +13,7 @@ num_cols = [
     'sup_devices.num',
     'ipadSc_urls.num',
     'lang.num',
-     'cont_rating',
+    'cont_rating',
 ]
 
 cat_cols = [
@@ -78,9 +78,34 @@ lr.fit(X_train, y_train)
 
 print_metrics(lr.predict(X_test), y_test)
 
-knn = KNeighborsRegressor(n_neighbors = 5)
+knn = KNeighborsRegressor(n_neighbors=5)
 knn.fit(X_train, y_train)
 
 print_metrics(knn.predict(X_test), y_test)
 
 from sklearn.model_selection import cross_validate
+
+cross_validate(LinearRegression(), X, data[target_col], cv=5,
+               scoring={'r2_score': make_scorer(r2_score),
+                        'mean_squared_error': make_scorer(mean_squared_error)})
+
+cross_validate(KNeighborsRegressor(), X, data[target_col], cv=5,
+               scoring={'r2_score': make_scorer(r2_score),
+                        'mean_squared_error': make_scorer(mean_squared_error)})
+
+# искать гиперпараметры
+
+from sklearn.model_selection import GridSearchCV
+
+gbr_grid_search = GridSearchCV(KNeighborsRegressor(),
+                               [{'n_neighbors': [1, 2, 3, 4, 6, 8, 10, 15]}],
+                               cv=5,
+                               error_score=make_scorer(mean_squared_error),
+                               verbose=10)
+gbr_grid_search.fit(X_train, y_train)
+
+print(gbr_grid_search.best_params_)
+print(gbr_grid_search.best_score_)
+print(gbr_grid_search.best_estimator_)
+
+
